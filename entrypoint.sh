@@ -14,12 +14,16 @@ fi
 
 region="$AWS_REGION"
 parameter_name_list="$INPUT_SSM_PARAMETER_LIST"
-prefix="${INPUT_PREFIX:-AWS_SSM_}"
+prefix="$INPUT_PREFIX"
 jq_filter="$INPUT_JQ_FILTER"
 simple_json="$INPUT_SIMPLE_JSON"
 
 format_var_name () {
-  echo "$1" | awk -v prefix="$prefix" -F. '{print prefix $NF}' | tr "[:lower:]" "[:upper:]"
+  if [[ -z "$INPUT_PREFIX" ]]; then
+    echo "$1" | tr "[:lower:]" "[:upper:]"
+  else
+    echo "$1" | awk -v prefix="$prefix" -F. '{print prefix $NF}' | tr "[:lower:]" "[:upper:]"
+  fi
 }
 
 get_ssm_param() {
